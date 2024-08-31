@@ -6,6 +6,9 @@ file_path = r"\AIC-2024\Data_2024\Map Keyframe\map-keyframes-b1\map-keyframes\L0
 # Read the CSV file into a DataFrame
 df = pd.read_csv(file_path)
 
+# Check type of column "frame_idx"
+print('Type of columm "frame_idx":', df['frame_idx'].dtype)
+
 # Display the first few rows of the DataFrame
 print(df.head())
 
@@ -18,7 +21,9 @@ def get_frame_idx_for_n(df, n_value):
     if not result.empty:
         # Get the value of 'frame_idx' for the matched row
         frame_idx = result.iloc[0]['frame_idx']
-        return frame_idx
+        print('Type of var frame_idx:', frame_idx.dtype)
+
+        return int(frame_idx)
     else:
         return None  # Return None if no matching row is found
 

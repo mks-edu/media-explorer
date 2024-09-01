@@ -1,7 +1,7 @@
 import glob
 
 # Specify the directory path
-directory = '/map-keyframes/*'
+directory = 'data/aic-2024/map-keyframes/*'
 
 # List all files in the directory
 files = glob.glob(directory)

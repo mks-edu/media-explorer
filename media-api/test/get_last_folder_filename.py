@@ -12,7 +12,7 @@ def get_last_subfolder_and_filename(file_path):
 
 
 # Example usage:
-file_path = "/path/to/your/subfolder/filename.ext"
+file_path = "data/aic-2024/keyframes/L01_V001/001.jpg"
 last_subfolder, file_name_without_extension = get_last_subfolder_and_filename(file_path)
 
 print("Last subfolder:", last_subfolder)

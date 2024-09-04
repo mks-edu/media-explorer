@@ -15,7 +15,7 @@ def get_frame_idx_for_n(df, n_value):
     else:
         return None  # Return None if no matching row is found
 
-def find_file_csv_fieno_frame_idx(folder_path: str, file_path: str):
+def find_file_csv_fileno_frame_idx(folder_path: str, file_path: str):
     '''
     Process file_path to extract the last sub folder and filename.
     Then lookup in the folder to get file .csv, sequence no of file, and frame index
@@ -25,7 +25,7 @@ def find_file_csv_fieno_frame_idx(folder_path: str, file_path: str):
     Ex: L01_V001.csv, 1, 0
     '''
 
-    filecsv, fileno = find_file_csv_fieno(folder_path, file_path)
+    filecsv, fileno = find_file_csv_fileno(folder_path, file_path)
 
     filecsv_path = os.path.join(folder_path, filecsv)
 
@@ -36,7 +36,7 @@ def find_file_csv_fieno_frame_idx(folder_path: str, file_path: str):
 
     return filecsv, fileno, frame_idx
 
-def find_file_csv_fieno(folder_path: str, file_path: str):
+def find_file_csv_fileno(folder_path: str, file_path: str):
     '''
     Process file_path to extract the last sub folder and filename.
     Then lookup in the folder to get file .csv and sequence no of file.

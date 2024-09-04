@@ -4,7 +4,7 @@ import clip
 from PIL import Image
 import json
 import pickle
-
+import numpy as np
 class MyClip:
     def __init__(self):
         # Load the CLIP model and the preprocessing function
@@ -43,8 +43,8 @@ class MyClip:
 
         return chunks
 
-    def encode_long_text_with_clip(delf, model, text, device, max_length=77):
-        chunks = delf.split_text(text, max_length)
+    def encode_long_text_with_clip(self, model, text, device, max_length=77):
+        chunks = self.split_text(text, max_length)
         chunk_embeddings = []
 
         for chunk in chunks:
@@ -77,3 +77,32 @@ class MyClip:
         # Save the video embeddings to a file
         with open(out_pkl, 'wb') as f:
             pickle.dump(video_embeddings, f)
+    ########################
+    def search_videos_with_clip(self, query, video_embeddings, model, device):
+        query_embedding = self.encode_long_text_with_clip(model, query, device)
+
+        similarities = []
+        for embedding, video in video_embeddings:
+            similarity = np.dot(query_embedding, embedding.T)
+            similarities.append((similarity, video))
+
+        # Sort by similarity
+        similarities.sort(key=lambda x: x[0], reverse=True)
+
+        return similarities
+    def load(self, pkl_filepath):
+        with open(pkl_filepath, 'rb') as f:
+            self.video_embeddings = pickle.load(f)
+
+    def search(self, query):
+        if self.video_embeddings is None:
+            print('video_embeddings is not created. Please check to call function load(pkl_filepath).')
+        else:
+            results = self.search_videos_with_clip(query, self.video_embeddings, self.model, self.device)
+
+            for similarity, video in results[:5]:  # Display top 5 results
+                print(f"Title: {video['title']}")
+                print(f"Description: {video['description']}")
+                print(f"Similarity: {similarity}")
+                print(f"Watch URL: {video['watch_url']}")
+                print("\n---\n")

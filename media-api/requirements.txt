@@ -6,3 +6,5 @@ ftfy
 regex
 tqdm
 whoosh
+easyocr
+numpy==1.23.0

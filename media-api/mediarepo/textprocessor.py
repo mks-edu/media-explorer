@@ -1,6 +1,7 @@
 import os
 import easyocr
-import glob
+import cv2
+import pytesseract
 from util import  get_last_subfolder_and_filename
 
 class TextExtractor:
@@ -13,7 +14,7 @@ class TextExtractor:
         '''
 
         img_text = self. reader.readtext(img_path)
-        final_text = ""
+        final_text = ''
 
         for _, text, __ in img_text:  # _ = bounding box, text = text and __ = confident level
             final_text += text
@@ -21,10 +22,41 @@ class TextExtractor:
 
         return final_text
 
-    def extract_text_folder(self, folder_path: str, out_folder_path = None):
+    def extract_text_video(self, video_path, separator =' '):
+        '''
+        @param img_path Ex: 'data/aic-2024/keyframes/L01_V017/065.jpg'
+        @param separator used to combine found texts
+        '''
+
+        # Load the video
+        cap = cv2.VideoCapture(video_path)
+        final_text = ''
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if not ret:
+                break
+
+            # Convert the frame to grayscale
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+            # Apply image preprocessing
+            gray = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+            gray = cv2.medianBlur(gray, 3)
+
+            # Extract text from the frame
+            text = pytesseract.image_to_string(gray)
+            final_text += text
+            final_text += separator
+
+        cap.release()
+
+        return final_text
+    def extract_text_folder(self, folder_path: str, out_folder_path = None, source_type = 0):
         '''
         Extract text from image folder.
         @param folder_path
+        @param out_folder_path
+        @param source_type
 
         '''
         print('Processing folder: ', os.path.realpath(folder_path))
@@ -40,7 +72,11 @@ class TextExtractor:
                 filePath = os.path.join(root, file)
 
                 try:
-                    text = self.extract_text(filePath)
+                    if source_type == 0:
+                        text = self.extract_text(filePath)
+                    else:
+                        text = self.extract_text_video(filePath, separator='\n')
+
                     parentFolder, filename_no_ext = get_last_subfolder_and_filename(filePath)
 
                     self.createFile(out_folder_path, parentFolder, filename_no_ext + ".txt", text)
